@@ -1,0 +1,106 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Users {
+  id Int @id @default(autoincrement())
+  email String @unique
+  password String?
+  name String?
+  picture String?
+  role String @default("user")
+  enable Boolean @default(true)
+  address String?
+  orders Orders[]
+  cart Carts[]
+  cretedAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Products {
+  id Int @id @default(autoincrement())
+  title String
+  description String
+  price Float
+  sold Int @default(0)
+  quantity Int
+  categoryId Int?
+  category Categories? @relation(fields: [categoryId], references: [id])
+  orderItems ProductsOnOrders[]
+  cartItems ProductsOnCarts[]
+  images Images[]
+  cretedAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Orders {
+  id Int @id @default(autoincrement())
+  products ProductsOnOrders[]
+  orderById Int
+  orderedBy Users @relation(fields: [orderById], references: [id], onDelete: Cascade)
+  cartTotal Float
+  orderStatus String @default("Not Process")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model ProductsOnOrders {
+  id Int @id @default(autoincrement())
+  productId Int
+  orderId Int
+  product Products @relation(fields: [productId], references: [id], onDelete: Cascade)
+  order Orders @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  count Int
+  price Float
+}
+
+model Categories {
+  id Int @id @default(autoincrement())
+  name String
+  product Products[]
+  createdAt DateTime @default(now())
+  uptatedAt DateTime @updatedAt
+}
+
+model Carts {
+  id Int @id @default(autoincrement())
+  products ProductsOnCarts[]
+  cartTotal Float
+  orderById Int
+  orderBy Users @relation(fields: [orderById], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model ProductsOnCarts {
+  id Int @id @default(autoincrement())
+  cartId Int
+  cart Carts @relation(fields: [cartId], references: [id], onDelete: Cascade)
+  productId Int
+  product Products @relation(fields: [productId], references: [id], onDelete: Cascade)
+  count Int
+  price Float
+}
+
+model Images {
+  id Int @id @default(autoincrement())
+  asset_id String
+  public_id String
+  url String
+  secure_url String
+  productId Int
+  product Products @relation(fields: [productId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
