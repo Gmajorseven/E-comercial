@@ -64,6 +64,9 @@ exports.read = async(req, res) => {
 exports.remove = async(req, res) => {
     try {
         const { id } = req.params
+
+        //delete pic
+
         await prisma.products.delete({
             where: {
                 id: Number(id)
