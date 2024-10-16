@@ -33,7 +33,7 @@ exports.register = async(req, res) => {
         })
 
         console.log(email)
-        res.status(200).send(user)        
+        res.status(200).json({ msg: 'Register sucessful!' })        
         
     } catch (error) {
         console.log(error)
