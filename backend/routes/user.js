@@ -2,20 +2,20 @@ const express = require('express')
 const { listUsers, changeStatus, changeRole,
     addUserCart, listUserCart, removeUserCart,
     saveAddress, saveOrder, listOrder } = require('../controller/user')
-const { authCheck, adminCheck } = require('../middleware/authCheck')
+const { userCheck, adminCheck } = require('../middleware/authCheck')
 const router = express.Router()
 
-router.get('/users', authCheck, adminCheck, listUsers)
-router.post('/change-status', authCheck, adminCheck, changeStatus)
-router.post('/change-role', authCheck, adminCheck, changeRole)
+router.get('/users', userCheck, adminCheck, listUsers)
+router.post('/change-status', userCheck, adminCheck, changeStatus)
+router.post('/change-role', userCheck, adminCheck, changeRole)
 
-router.post('/user/cart', authCheck, addUserCart)
-router.get('/user/cart', authCheck, listUserCart)
-router.delete('/user/cart', authCheck, removeUserCart)
+router.post('/user/cart', userCheck, addUserCart)
+router.get('/user/cart', userCheck, listUserCart)
+router.delete('/user/cart', userCheck, removeUserCart)
 
-router.post('/user/address', authCheck, saveAddress)
+router.post('/user/address', userCheck, saveAddress)
 
-router.post('/user/order', authCheck, saveOrder)
-router.get('/user/order', authCheck, listOrder)
+router.post('/user/order', userCheck, saveOrder)
+router.get('/user/order', userCheck, listOrder)
 
 module.exports = router
