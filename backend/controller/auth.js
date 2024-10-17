@@ -44,12 +44,20 @@ exports.register = async(req, res) => {
 exports.login = async(req, res) => {
     try {
         const { email, password } = req.body
+        
+        if(!email) {
+            return res.status(400).json({ msg: 'Email is require!' })
+        }
 
+        if(!password) {
+            return res.status(400).json({ msg: 'Password is require!' })
+        }
         const user = await prisma.users.findFirst({
             where: {
                 email: email
             }
         })
+        
         if(!user || !user.enable) {
             if (!user) {
                 return res.status(400).json({ msg: 'User not fonud!' })
