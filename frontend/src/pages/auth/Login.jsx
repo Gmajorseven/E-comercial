@@ -29,7 +29,6 @@ const Login = () => {
     try {
       const res = await actionLogin(form)
       const role = res.data.payload.role
-      console.log(role)
       roleRedirect(role)
       toast.success('Welcome back!')
     } catch (error) {
@@ -56,7 +55,7 @@ const Login = () => {
         <input type="password" className='border'
           name='password' onChange={handleOnChange}
         />
-        <button className='bg-black rounded-md text-white'>Login</button>
+        <button className='bg-black rounded-md text-white p-1'>Login</button>
 
       </form>
     </div>

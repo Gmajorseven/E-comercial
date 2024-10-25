@@ -1,4 +1,11 @@
 const prisma = require('../config/prisma')
+const cloudinary = require('cloudinary').v2 
+
+cloudinary.config({
+    cloud_name: process.env.CLOUDINARY_NAME,
+    api_key: process.env.CLOUDINARY_API_KEY,
+    api_secret: process.env.CLOUDINARY_API_SECRET
+})
 
 exports.create = async(req, res) => {
     try {
@@ -45,7 +52,7 @@ exports.list = async(req, res) => {
 exports.read = async(req, res) => {
     try {
         const { id } = req.params
-        const product = await prisma.products.findMany({
+        const product = await prisma.products.findFirst({
             where: {
                 id: Number(id)
             }, 
@@ -66,12 +73,35 @@ exports.remove = async(req, res) => {
         const { id } = req.params
 
         //delete pic
+        const product = await prisma.products.findFirst({
+            where: {
+                id: Number(id)
+            },
+            include: {
+                images: true
+            }
+        })
+
+        if(!product) {
+            return res.status(400).json({ msg: 'Product not found!' })
+        }
+
+        const deleteImages = product.images.map((image) => 
+        new Promise((resolve, reject) => {
+                cloudinary.uploader.destroy(image.public_id,(error, result) => {
+                    error ? reject(error) : resolve(result)
+                })
+            })
+        )
+
+        await Promise.all(deleteImages)
 
         await prisma.products.delete({
             where: {
                 id: Number(id)
             }
         })
+        
         res.status(200).json({ msg: 'Delete successful' })
     } catch (error) {
         console.log(error)
@@ -206,6 +236,35 @@ exports.searchFiters = async(req, res) => {
             console.log('price -->', price)
             await handlePrice(req, res, price)
         }
+
+    } catch (error) {
+        console.log(error)
+        res.status(500).json({ msg: 'Server error' })
+    }
+}
+
+exports.uploadImg = async(req, res) => {
+    try {
+        const { image } = req.body
+        const result = await cloudinary.uploader.upload(image, {
+            public_id: `${Date.now()}`,
+            resource_type: 'auto',
+            folder: 'ShopProductsPIC'
+        })
+        res.send(result)
+    } catch (error) {
+        console.log(error)
+        res.status(500).json({ msg: 'Server error' })
+    }
+}
+
+exports.deleteImg = async(req, res) => {
+    try {
+        const { public_id } = req.body
+
+        await cloudinary.uploader.destroy(public_id, (result) => {
+            res.status(200).json({ msg: 'Remove Image Successful!' })
+        })
 
     } catch (error) {
         console.log(error)

@@ -17,6 +17,8 @@ import LayoutUser from '../layouts/LayoutUser'
 import HomeUser from '../pages/user/HomeUser'
 import ProtectRouteUser from './ProtectRouteUser'
 import ProtectRouteAdmin from './ProtectRouteAdmin'
+import Order from '../pages/admin/Order'
+import Editproduct from '../pages/admin/Editproduct'
 
 const router = createBrowserRouter([
     { 
@@ -40,7 +42,9 @@ const router = createBrowserRouter([
         { index: true, element: <Dashboard /> },
         { path: 'category', element: <Category /> },
         { path: 'product', element: <Product /> },
-        { path: 'manage', element: <Manage /> }
+        { path: 'product/:id', element: <Editproduct /> },
+        { path: 'manage', element: <Manage /> },
+        { path: 'order', element: <Order /> }
       ]
     },
 
