@@ -7,7 +7,6 @@ const FormCategory = () => {
 
   const token = useEcomStore((c) => c.token)
   const [name, setName] = useState('')
-  //const [categories, setCategories] = useState([])
   const categories = useEcomStore((c) => c.categories)
   const getCategory = useEcomStore((c) => c.getCategory)
 
